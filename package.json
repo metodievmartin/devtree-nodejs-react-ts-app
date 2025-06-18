@@ -1,0 +1,24 @@
+{
+  "name": "devtree",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "install:server": "npm install --prefix server",
+    "install:client": "npm install --prefix client",
+    "install:all": "npm run install:server && npm run install:client",
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "dev": "npm run server & npm run client",
+    "format": "prettier --write .",
+    "mongo:up": "docker compose -f docker/docker-compose.mongodb.dev.yml -p nasa-project up -d",
+    "mongo:down": "docker compose -f docker/docker-compose.mongodb.dev.yml -p nasa-project down",
+    "mongo:logs": "docker compose -f docker/docker-compose.mongodb.dev.yml -p nasa-project logs -f"
+    "test": "echo \"Error: no test specified\" && exit 1",
+  },
+  "author": "Martin Metodiev",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "prettier": "^3.6.2"
+  }
+}
