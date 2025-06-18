@@ -10,10 +10,10 @@
     "dev:client": "npm run dev --prefix client",
     "dev": "npm run server & npm run client",
     "format": "prettier --write .",
-    "mongo:up": "docker compose -f docker/docker-compose.mongodb.dev.yml -p nasa-project up -d",
-    "mongo:down": "docker compose -f docker/docker-compose.mongodb.dev.yml -p nasa-project down",
-    "mongo:logs": "docker compose -f docker/docker-compose.mongodb.dev.yml -p nasa-project logs -f"
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "mongo:up": "docker compose -f docker/docker-compose.mongodb.dev.yml -p devtree up -d",
+    "mongo:down": "docker compose -f docker/docker-compose.mongodb.dev.yml -p devtree down",
+    "mongo:logs": "docker compose -f docker/docker-compose.mongodb.dev.yml -p devtree logs -f",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Martin Metodiev",
   "license": "ISC",
