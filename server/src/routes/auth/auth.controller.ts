@@ -1,15 +1,43 @@
 import { Request, Response } from 'express';
 
 import { catchAsync } from '../../utils/catch-async';
+import { registerUser } from '../../services/auth.service';
+import { UserRegistrationData } from '../../types/user.types';
 
 /**
  * Register a new user
- * @route POST /api/auth/register
+ * @route POST /auth/v1/register
  */
 export const register = catchAsync(async (req: Request, res: Response) => {
-  // TODO: implement user registration
-  console.log('body: ', req.body);
+  const { email, password, handle, name, description, image, links } = req.body;
+
+  // Explicitly create the registration data object
+  const registrationData: UserRegistrationData = {
+    email,
+    password,
+    handle,
+    name,
+    description,
+    image,
+    links,
+  };
+
+  // Register the user
+  const user = await registerUser(registrationData);
+
+  // Return success response
   res.status(201).json({
-    status: 'success',
+    success: true,
+    data: {
+      user: {
+        id: user._id,
+        email: user.email,
+        handle: user.handle,
+        name: user.name,
+        description: user.description,
+        image: user.image,
+        links: user.links,
+      },
+    },
   });
 });
