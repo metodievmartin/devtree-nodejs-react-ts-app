@@ -1,14 +1,11 @@
-import bcrypt from 'bcrypt';
-
 import {
   createUser,
   findUserByEmail,
   findUserByHandle,
 } from '../models/user.model';
+import { hashPassword } from '../utils/auth';
 import { ApiError } from '../utils/api-error';
 import { UserRegistrationData } from '../types/user.types';
-
-const SALT_ROUNDS = 10;
 
 /**
  * Register a new user
@@ -32,8 +29,8 @@ export const registerUser = async (registrationData: UserRegistrationData) => {
     throw new ApiError(409, 'Handle is already taken');
   }
 
-  // Hash the password
-  const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+  // Hash the password using the utility function
+  const hashedPassword = await hashPassword(password);
 
   // Create the user with the same data but replace the password with the hashed one
   return await createUser({
