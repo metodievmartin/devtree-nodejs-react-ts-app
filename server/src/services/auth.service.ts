@@ -1,3 +1,5 @@
+import slug from 'slug';
+
 import {
   createUser,
   findUserByEmail,
@@ -22,8 +24,10 @@ export const registerUser = async (registrationData: UserRegistrationData) => {
     throw new ApiError(409, 'Email is already taken');
   }
 
-  // Check if the handle is already taken
-  const existingHandle = await findUserByHandle(handle);
+  // Normalise the handle and check if it's already taken
+  // E.g. "John Doe" -> "johndoe"
+  const normalisedHandle = slug(handle, '');
+  const existingHandle = await findUserByHandle(normalisedHandle);
 
   if (existingHandle) {
     throw new ApiError(409, 'Handle is already taken');
@@ -32,10 +36,11 @@ export const registerUser = async (registrationData: UserRegistrationData) => {
   // Hash the password using the utility function
   const hashedPassword = await hashPassword(password);
 
-  // Create the user with the same data but replace the password with the hashed one
+  // Create the user with the same data but replace the password with the hashed one and the normalised handle
   return await createUser({
     ...registrationData,
     password: hashedPassword,
+    handle: normalisedHandle,
   });
 
   // send confirmation email
