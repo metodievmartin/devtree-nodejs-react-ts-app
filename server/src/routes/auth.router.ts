@@ -18,4 +18,12 @@ authRouter.post(
   authController.register
 );
 
+authRouter.post(
+  '/login',
+  body('email').isEmail().withMessage('Invalid email address'),
+  body('password').notEmpty().withMessage('The password is required'),
+  handleInputErrors,
+  authController.login
+);
+
 export default authRouter;

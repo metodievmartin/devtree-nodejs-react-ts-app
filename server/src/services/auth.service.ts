@@ -5,7 +5,7 @@ import {
   findUserByEmail,
   findUserByHandle,
 } from '../models/user.model';
-import { hashPassword } from '../utils/auth';
+import { comparePassword, hashPassword } from '../utils/auth';
 import { ApiError } from '../utils/api-error';
 import { UserRegistrationData } from '../types/user.types';
 
@@ -44,4 +44,35 @@ export const registerUser = async (registrationData: UserRegistrationData) => {
   });
 
   // send confirmation email
+};
+
+/**
+ * Login a user
+ * @param email User's email address
+ * @param password User's password
+ * @returns User document or null if not found
+ */
+export const loginUser = async (email: string, password: string) => {
+  // Return a generic error message to not reveal much information
+  const invalidCredentialsMsg = 'Wrong email or password';
+
+  if (!email || !password) {
+    throw new ApiError(401, invalidCredentialsMsg);
+  }
+
+  const user = await findUserByEmail(email);
+
+  if (!user) {
+    throw new ApiError(401, invalidCredentialsMsg);
+  }
+
+  const passwordMatch = await comparePassword(password, user.password);
+
+  if (!passwordMatch) {
+    throw new ApiError(401, invalidCredentialsMsg);
+  }
+
+  // TODO: generate and return a JWT token
+
+  return passwordMatch;
 };

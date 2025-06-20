@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 import { catchAsync } from '../../utils/catch-async';
-import { registerUser } from '../../services/auth.service';
+import { loginUser, registerUser } from '../../services/auth.service';
 import { UserRegistrationData } from '../../types/user.types';
 
 /**
@@ -39,5 +39,20 @@ export const register = catchAsync(async (req: Request, res: Response) => {
         links: user.links,
       },
     },
+  });
+});
+
+/**
+ * User login
+ * @route POST /auth/v1/login
+ */
+export const login = catchAsync(async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  console.log('req.body', req.body);
+
+  const loginResult = await loginUser(email, password);
+
+  res.status(200).json({
+    success: loginResult,
   });
 });
