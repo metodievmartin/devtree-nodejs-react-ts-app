@@ -8,11 +8,17 @@ export type User = {
   links: string;
 };
 
-export type RegisterForm = Pick<User, 'handle' | 'email' | 'name'> & {
+export type RegisterData = Pick<User, 'handle' | 'email' | 'name'> & {
   password: string;
   password_confirmation: string;
 };
 
-export type LoginForm = Pick<User, 'email'> & {
+export type LoginCredentials = Pick<User, 'email'> & {
   password: string;
+};
+
+export type AuthResponse = {
+  success: boolean;
+  token: string;
+  user: User;
 };
