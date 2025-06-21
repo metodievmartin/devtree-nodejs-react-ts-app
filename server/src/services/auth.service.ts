@@ -5,9 +5,9 @@ import {
   findUserByEmail,
   findUserByHandle,
 } from '../models/user.model';
-import { comparePassword, hashPassword } from '../utils/auth';
 import { ApiError } from '../utils/api-error';
 import { UserRegistrationData } from '../types/user.types';
+import { comparePassword, generateJWT, hashPassword } from '../utils/auth';
 
 /**
  * Register a new user
@@ -54,7 +54,7 @@ export const registerUser = async (registrationData: UserRegistrationData) => {
  */
 export const loginUser = async (email: string, password: string) => {
   // Return a generic error message to not reveal much information
-  const invalidCredentialsMsg = 'Wrong email or password';
+  const invalidCredentialsMsg = 'Incorrect email or password';
 
   if (!email || !password) {
     throw new ApiError(401, invalidCredentialsMsg);
@@ -72,7 +72,13 @@ export const loginUser = async (email: string, password: string) => {
     throw new ApiError(401, invalidCredentialsMsg);
   }
 
-  // TODO: generate and return a JWT token
-
-  return passwordMatch;
+  try {
+    return generateJWT({
+      id: user._id,
+      email: user.email,
+    });
+  } catch (error) {
+    console.error('JWT generation failed:', error);
+    throw new ApiError(500, 'Something went wrong, please try again later');
+  }
 };

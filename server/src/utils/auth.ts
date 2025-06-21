@@ -1,4 +1,8 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+
+import config from '../config/app.config';
+import { AppJwtPayload } from '../types/auth.types';
 
 const SALT_ROUNDS = 10;
 
@@ -23,4 +27,40 @@ export const comparePassword = async (
   hash: string
 ) => {
   return await bcrypt.compare(enteredPassword, hash);
+};
+
+/**
+ * Verifies a JWT token and returns the decoded payload
+ * @param token - The JWT token to verify
+ * @returns The decoded token payload
+ * @throws {jwt.JsonWebTokenError} If the token is invalid
+ * @throws {jwt.TokenExpiredError} If the token has expired
+ */
+export const verifyJWT = (token: string): AppJwtPayload => {
+  return jwt.verify(token, config.jwt.secret) as AppJwtPayload;
+};
+
+/**
+ * Generates a JWT token with the provided payload
+ * @param payload - The data to include in the JWT payload. Must contain at least 'id' and 'email'.
+ * @returns A signed JWT token string
+ * @throws {Error} If JWT secret is not configured
+ * @throws {Error} If payload is missing required fields (id, email)
+ * @throws {JsonWebTokenError} If token signing fails
+ * @example
+ * const token = generateJWT({ id: '123', email: 'user@example.com' });
+ * // Returns a JWT token that expires in 30 days (as per config)
+ */
+export const generateJWT = (payload: AppJwtPayload): string => {
+  if (!config.jwt.secret) {
+    throw new Error('JWT secret is not configured');
+  }
+
+  if (!payload?.id || !payload?.email) {
+    throw new Error('Payload must contain id and email');
+  }
+
+  return jwt.sign(payload, config.jwt.secret, {
+    expiresIn: config.jwt.expiresIn,
+  });
 };

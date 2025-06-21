@@ -49,6 +49,12 @@ const config = {
   db: {
     url: process.env.MONGODB_URL,
   },
+
+  // JWT configuration
+  jwt: {
+    secret: process.env.JWT_SECRET,
+    expiresIn: '60d',
+  },
 } as const;
 
 export default config;

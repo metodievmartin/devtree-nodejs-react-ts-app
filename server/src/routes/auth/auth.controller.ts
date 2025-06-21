@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 
 import { catchAsync } from '../../utils/catch-async';
-import { loginUser, registerUser } from '../../services/auth.service';
 import { UserRegistrationData } from '../../types/user.types';
+import { loginUser, registerUser } from '../../services/auth.service';
 
 /**
  * Register a new user
@@ -48,11 +48,11 @@ export const register = catchAsync(async (req: Request, res: Response) => {
  */
 export const login = catchAsync(async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  console.log('req.body', req.body);
 
-  const loginResult = await loginUser(email, password);
+  const accessToken = await loginUser(email, password);
 
   res.status(200).json({
-    success: loginResult,
+    success: true,
+    accessToken,
   });
 });
