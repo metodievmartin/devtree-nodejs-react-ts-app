@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router';
 import apiService from '../services/api.ts';
 import type { LoginCredentials } from '../types';
 import ErrorMessage from '../components/ErrorMessage.tsx';
+import { toast } from 'sonner';
 
 const LoginView = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const LoginView = () => {
       navigate('/admin');
     } catch (error) {
       if (isAxiosError(error) && error.response) {
-        console.error(error.response.data.error);
+        toast.error(error.response.data.error);
       }
     }
   };
@@ -37,6 +38,7 @@ const LoginView = () => {
       <form
         onSubmit={handleSubmit(handleLogin)}
         className="bg-white px-5 py-20 rounded-lg space-y-10 mt-10"
+        noValidate
       >
         <div className="grid grid-cols-1 space-y-3">
           <label htmlFor="email" className="text-2xl text-slate-500">

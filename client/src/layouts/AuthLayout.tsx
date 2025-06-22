@@ -1,3 +1,4 @@
+import { Toaster } from 'sonner';
 import { Outlet } from 'react-router';
 
 import Logo from '../components/Logo.tsx';
@@ -13,6 +14,8 @@ const AuthLayout = () => {
             <Outlet />
           </div>
         </div>
+
+        <Toaster position="top-center" />
       </div>
     </>
   );

@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 
@@ -28,13 +29,12 @@ const RegisterView = () => {
 
   const handleRegister = async (formData: RegisterData) => {
     try {
-      const { data } = await apiService.auth.register(formData);
-      console.log(data);
+      await apiService.auth.register(formData);
       reset(initialValues);
       navigate('/auth/login');
     } catch (error) {
       if (isAxiosError(error) && error.response) {
-        console.error(error.response.data.error);
+        toast.error(error.response.data.error);
       }
     }
   };
@@ -46,6 +46,7 @@ const RegisterView = () => {
       <form
         onSubmit={handleSubmit(handleRegister)}
         className="bg-white px-5 py-20 rounded-lg space-y-10 mt-10"
+        noValidate
       >
         <div className="grid grid-cols-1 space-y-3">
           <label htmlFor="name" className="text-2xl text-slate-500">
