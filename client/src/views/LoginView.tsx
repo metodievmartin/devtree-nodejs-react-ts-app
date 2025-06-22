@@ -23,7 +23,7 @@ const LoginView = () => {
   const handleLogin = async (formData: LoginCredentials) => {
     try {
       await apiService.auth.login(formData);
-      navigate(paths.admin.dashboard());
+      navigate(paths.admin.index());
     } catch (error) {
       handleApiErrorWithToast(error, 'Login failed. Please try again.');
     }
