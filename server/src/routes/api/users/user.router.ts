@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import { getCurrentUser } from './user.controller';
-import { authenticate } from '../../../middleware/auth.middleware';
+import { authenticate } from '../../../middlewares/auth.middleware';
 
 const userRouter = Router();
 
