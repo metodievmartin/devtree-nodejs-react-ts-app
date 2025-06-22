@@ -19,6 +19,6 @@ export type LoginCredentials = Pick<User, 'email'> & {
 
 export type AuthResponse = {
   success: boolean;
-  token: string;
+  accessToken: string;
   user: User;
 };

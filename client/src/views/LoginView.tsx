@@ -1,11 +1,15 @@
-import { Link } from 'react-router';
+import { isAxiosError } from 'axios';
 import { useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router';
 
-import type { LoginForm } from '../types';
+import apiService from '../services/api.ts';
+import type { LoginCredentials } from '../types';
 import ErrorMessage from '../components/ErrorMessage.tsx';
 
 const LoginView = () => {
-  const initialValues: LoginForm = {
+  const navigate = useNavigate();
+
+  const initialValues: LoginCredentials = {
     email: '',
     password: '',
   };
@@ -15,8 +19,15 @@ const LoginView = () => {
     formState: { errors },
   } = useForm({ defaultValues: initialValues });
 
-  const handleLogin = async (formData: LoginForm) => {
-    console.log(formData);
+  const handleLogin = async (formData: LoginCredentials) => {
+    try {
+      await apiService.auth.login(formData);
+      navigate('/admin');
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        console.error(error.response.data.error);
+      }
+    }
   };
 
   return (
@@ -39,7 +50,7 @@ const LoginView = () => {
             {...register('email', {
               required: 'The email is required',
               pattern: {
-                value: /\S+@\S+\.\S+/,
+                value: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
                 message: 'The email is not valid',
               },
             })}
