@@ -1,11 +1,10 @@
-import { isAxiosError } from 'axios';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 
 import apiService from '../services/api.ts';
+import { handleApiErrorWithToast } from '../services/apiUtils.ts';
 import type { LoginCredentials } from '../types';
 import ErrorMessage from '../components/ErrorMessage.tsx';
-import { toast } from 'sonner';
 
 const LoginView = () => {
   const navigate = useNavigate();
@@ -25,9 +24,7 @@ const LoginView = () => {
       await apiService.auth.login(formData);
       navigate('/admin');
     } catch (error) {
-      if (isAxiosError(error) && error.response) {
-        toast.error(error.response.data.error);
-      }
+      handleApiErrorWithToast(error, 'Login failed. Please try again.');
     }
   };
 

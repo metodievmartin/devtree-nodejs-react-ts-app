@@ -1,11 +1,10 @@
-import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 
-import { isAxiosError } from 'axios';
 import apiService from '../services/api.ts';
 import type { RegisterData } from '../types';
 import ErrorMessage from '../components/ErrorMessage.tsx';
+import { handleApiErrorWithToast } from '../services/apiUtils.ts';
 
 const RegisterView = () => {
   const navigate = useNavigate();
@@ -33,9 +32,7 @@ const RegisterView = () => {
       reset(initialValues);
       navigate('/auth/login');
     } catch (error) {
-      if (isAxiosError(error) && error.response) {
-        toast.error(error.response.data.error);
-      }
+      handleApiErrorWithToast(error, 'Registration failed. Please try again.');
     }
   };
 
