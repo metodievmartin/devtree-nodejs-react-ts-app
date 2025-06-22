@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 
+import paths from '../utils/paths.ts';
 import apiService from '../services/api.ts';
 import type { RegisterData } from '../types';
 import ErrorMessage from '../components/ErrorMessage.tsx';
@@ -30,7 +31,7 @@ const RegisterView = () => {
     try {
       await apiService.auth.register(formData);
       reset(initialValues);
-      navigate('/auth/login');
+      navigate(paths.auth.login());
     } catch (error) {
       handleApiErrorWithToast(error, 'Registration failed. Please try again.');
     }
@@ -153,7 +154,10 @@ const RegisterView = () => {
       </form>
 
       <nav className="mt-10">
-        <Link className="text-center text-white text-lg block" to="/auth/login">
+        <Link
+          className="text-center text-white text-lg block"
+          to={paths.auth.login()}
+        >
           Already have an account? Login here
         </Link>
       </nav>

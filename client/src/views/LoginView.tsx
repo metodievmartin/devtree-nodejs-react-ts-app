@@ -1,10 +1,11 @@
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 
+import paths from '../utils/paths.ts';
 import apiService from '../services/api.ts';
-import { handleApiErrorWithToast } from '../services/apiUtils.ts';
 import type { LoginCredentials } from '../types';
 import ErrorMessage from '../components/ErrorMessage.tsx';
+import { handleApiErrorWithToast } from '../services/apiUtils.ts';
 
 const LoginView = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const LoginView = () => {
   const handleLogin = async (formData: LoginCredentials) => {
     try {
       await apiService.auth.login(formData);
-      navigate('/admin');
+      navigate(paths.admin.dashboard());
     } catch (error) {
       handleApiErrorWithToast(error, 'Login failed. Please try again.');
     }
@@ -84,7 +85,7 @@ const LoginView = () => {
       <nav className="mt-10">
         <Link
           className="text-center text-white text-lg block"
-          to="/auth/register"
+          to={paths.auth.register()}
         >
           Don't have an account? Create one here
         </Link>
