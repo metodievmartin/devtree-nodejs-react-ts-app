@@ -2,8 +2,8 @@ import jwt from 'jsonwebtoken';
 import type { Request, Response, NextFunction } from 'express';
 
 import { verifyJWT } from '../utils/auth';
-import { IUser } from '../types/user.types';
 import { ApiError } from '../utils/api-error';
+import { SafeUser } from '../types/user.types';
 import { catchAsync } from '../utils/catch-async';
 import { AppJwtPayload } from '../types/auth.types';
 import { findUserById } from '../models/user.model';
@@ -12,7 +12,7 @@ import { findUserById } from '../models/user.model';
 declare global {
   namespace Express {
     interface Request {
-      user?: IUser;
+      user?: SafeUser;
     }
   }
 }
@@ -66,7 +66,18 @@ export const authenticate = catchAsync(
     }
 
     // Add user data to request for use in route handlers
-    req.user = user;
+    // Omit password and explicitly pass the necessary fields by using the SafeUser type
+    const safeUser: SafeUser = {
+      _id: user._id,
+      email: user.email,
+      name: user.name,
+      handle: user.handle,
+      description: user.description,
+      image: user.image,
+      links: user.links,
+    };
+
+    req.user = safeUser;
 
     next();
   }

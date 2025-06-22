@@ -1,7 +1,11 @@
 import { Router } from 'express';
 import { authenticate } from '../middleware/auth.middleware';
+import userRouter from './api/users/user.router';
 
 const apiRouter = Router();
+
+// Mount user routes
+apiRouter.use('/users', userRouter);
 
 // API routes
 apiRouter.get('/status', (req, res) => {

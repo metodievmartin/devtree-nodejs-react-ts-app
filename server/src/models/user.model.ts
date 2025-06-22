@@ -7,7 +7,7 @@ import { IUser, UserRegistrationData } from '../types/user.types';
  * @returns User document or null if not found
  */
 export const findUserByEmail = async (email: string): Promise<IUser | null> => {
-  return User.findOne({ email }).exec();
+  return User.findOne({ email }, { __v: 0 }).exec();
 };
 
 /**
@@ -18,7 +18,7 @@ export const findUserByEmail = async (email: string): Promise<IUser | null> => {
 export const findUserByHandle = async (
   handle: string
 ): Promise<IUser | null> => {
-  return User.findOne({ handle }).exec();
+  return User.findOne({ handle }, { __v: 0 }).exec();
 };
 
 /**
@@ -27,7 +27,7 @@ export const findUserByHandle = async (
  * @returns User document or null if not found
  */
 export const findUserById = async (id: string): Promise<IUser | null> => {
-  return User.findById(id).exec();
+  return User.findById(id, { __v: 0 }).exec();
 };
 
 /**

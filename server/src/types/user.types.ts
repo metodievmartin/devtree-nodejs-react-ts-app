@@ -15,6 +15,15 @@ export interface IUser extends Document<string> {
 }
 
 /**
+ * User without sensitive information (password)
+ * Used for attaching to requests and sending in responses
+ */
+export type SafeUser = Pick<
+  IUser,
+  '_id' | 'handle' | 'name' | 'email' | 'description' | 'image' | 'links'
+>;
+
+/**
  * User registration data
  * Contains all fields needed to create a new user
  */
