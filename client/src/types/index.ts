@@ -22,3 +22,5 @@ export type AuthResponse = {
   accessToken: string;
   user: User;
 };
+
+export type ProfileForm = Pick<User, 'handle' | 'description'>;
