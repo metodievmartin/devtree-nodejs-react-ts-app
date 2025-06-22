@@ -1,6 +1,18 @@
+import { Document } from 'mongoose';
+
 /**
- * User-related type definitions
+ * User document
+ * Contains all fields of a user
  */
+export interface IUser extends Document<string> {
+  handle: string;
+  name: string;
+  email: string;
+  password: string;
+  description: string;
+  image: string;
+  links: string;
+}
 
 /**
  * User registration data

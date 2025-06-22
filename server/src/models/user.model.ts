@@ -1,5 +1,5 @@
-import User, { IUser } from './user.mongo';
-import { UserRegistrationData } from '../types/user.types';
+import User from './user.mongo';
+import { IUser, UserRegistrationData } from '../types/user.types';
 
 /**
  * Find a user by their email address
