@@ -1,11 +1,15 @@
-import { Link } from 'react-router';
 import { useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router';
 
-import type { RegisterForm } from '../types';
+import { isAxiosError } from 'axios';
+import apiService from '../services/api.ts';
+import type { RegisterData } from '../types';
 import ErrorMessage from '../components/ErrorMessage.tsx';
 
 const RegisterView = () => {
-  const initialValues: RegisterForm = {
+  const navigate = useNavigate();
+
+  const initialValues: RegisterData = {
     name: '',
     email: '',
     handle: '',
@@ -22,9 +26,17 @@ const RegisterView = () => {
 
   const password = watch('password');
 
-  const handleRegister = async (formData: RegisterForm) => {
-    console.log(formData);
-    reset(initialValues);
+  const handleRegister = async (formData: RegisterData) => {
+    try {
+      const { data } = await apiService.auth.register(formData);
+      console.log(data);
+      reset(initialValues);
+      navigate('/auth/login');
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        console.error(error.response.data.error);
+      }
+    }
   };
 
   return (
@@ -88,7 +100,7 @@ const RegisterView = () => {
             <ErrorMessage>{errors.handle.message}</ErrorMessage>
           )}
         </div>
-        
+
         <div className="grid grid-cols-1 space-y-3">
           <label htmlFor="password" className="text-2xl text-slate-500">
             Password
