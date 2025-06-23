@@ -1,8 +1,14 @@
 import axios, { AxiosError } from 'axios';
-import type { AuthResponse, LoginCredentials, RegisterData } from '../types';
+import type {
+  AuthResponse,
+  LoginCredentials,
+  RegisterData,
+  User,
+  UserApiResponse,
+} from '../types';
 
 // API path prefixes
-// const API_PREFIX = '/api/v1';
+const API_PREFIX = '/api/v1';
 const AUTH_PREFIX = '/auth/v1';
 const AUTH_TOKEN_KEY = 'AUTH_TOKEN';
 
@@ -32,7 +38,7 @@ const authMethods = {
       `${AUTH_PREFIX}/login`,
       credentials
     );
-    
+
     const { data } = axiosResponse;
 
     if (!data.success || !data.accessToken) {
@@ -69,7 +75,35 @@ const authMethods = {
 
 // API methods with better typing
 const apiMethods = {
-  // implement api methods
+  /**
+   * Get the currently authenticated user
+   * @returns Promise with the user data
+   */
+  getMyUser: async (): Promise<User> => {
+    const axiosResponse = await api.get<UserApiResponse>(
+      `${API_PREFIX}/users/me`
+    );
+
+    const { data } = axiosResponse;
+
+    if (!data.success || !data.user) {
+      // Custom error response for consistent error handling
+      throw new AxiosError(
+        'Failed to fetch user data',
+        '401',
+        axiosResponse.config,
+        axiosResponse.request,
+        {
+          ...axiosResponse,
+          data: { error: 'Failed to fetch user data' },
+          status: 401,
+          statusText: 'Unauthorized',
+        }
+      );
+    }
+
+    return data.user;
+  },
 };
 
 // Combined service object

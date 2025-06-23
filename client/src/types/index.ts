@@ -23,4 +23,9 @@ export type AuthResponse = {
   user: User;
 };
 
+export type UserApiResponse = {
+  success: boolean;
+  user: User;
+};
+
 export type ProfileForm = Pick<User, 'handle' | 'description'>;
