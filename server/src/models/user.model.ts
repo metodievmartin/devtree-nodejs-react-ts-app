@@ -1,3 +1,5 @@
+import slug from 'slug';
+
 import User from './user.mongo';
 import { IUser, UserRegistrationData } from '../types/user.types';
 
@@ -40,4 +42,26 @@ export const createUser = async (
 ): Promise<IUser> => {
   const user = new User(userData);
   return user.save();
+};
+
+/**
+ * Create a handle from a string
+ * @param input String to create the `handle` from
+ * @param [replacement] Optional string to replace spaces with
+ *
+ * @example
+ * createHandle('John Doe'); // 'johndoe'
+ * createHandle('John Doe!@£$[', '-'); // → "john-doe"
+ * createHandle("Mário's Café #12]", '-'); // → "marios-cafe-12"
+ * createHandle('  Foo/Bar_baz '); // → "foobarbaz"
+ *
+ * @returns Handle string
+ */
+export const createHandle = (input: string, replacement?: string): string => {
+  return slug(input, {
+    replacement: replacement || '', // Replace spaces with provided character, defaults to empty string
+    remove: /[*+~.()'"!:@^%&=/\\#?,<>\[\]{}|`]/g, // Remove special characters
+    lower: true, // The result will be lowercased
+    trim: true, // Trim leading/trailing separator
+  });
 };

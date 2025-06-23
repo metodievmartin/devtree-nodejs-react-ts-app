@@ -82,3 +82,27 @@ export const authenticate = catchAsync(
     next();
   }
 );
+
+/**
+ * Middleware factory to verify resource ownership
+ *
+ * Returns a middleware that checks if the authenticated user is the owner
+ * of the resource identified by the specified URL parameter.
+ *
+ * @param paramKey - The URL parameter key that contains the user ID (default: 'userId')
+ * @returns Express middleware function
+ */
+export const verifyOwnership = (paramKey: string = 'userId') => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const requestedUserId = req.params[paramKey];
+    const authenticatedUserId = req.user?._id?.toString();
+
+    if (!authenticatedUserId || requestedUserId !== authenticatedUserId) {
+      return next(
+        new ApiError(403, 'You are not authorised to access this resource')
+      );
+    }
+
+    next();
+  };
+};

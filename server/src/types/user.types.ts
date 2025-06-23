@@ -36,3 +36,5 @@ export interface UserRegistrationData {
   image?: string;
   links?: string;
 }
+
+export type UserUpdateData = Pick<IUser, 'name' | 'handle' | 'description'>;
