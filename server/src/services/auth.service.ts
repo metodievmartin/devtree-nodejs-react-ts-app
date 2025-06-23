@@ -1,9 +1,8 @@
-import slug from 'slug';
-
 import {
   createUser,
   findUserByEmail,
   findUserByHandle,
+  createHandle,
 } from '../models/user.model';
 import { ApiError } from '../utils/api-error';
 import { UserRegistrationData } from '../types/user.types';
@@ -26,7 +25,7 @@ export const registerUser = async (registrationData: UserRegistrationData) => {
 
   // Normalise the handle and check if it's already taken
   // E.g. "John Doe" -> "johndoe"
-  const normalisedHandle = slug(handle, '');
+  const normalisedHandle = createHandle(handle);
   const existingHandle = await findUserByHandle(normalisedHandle);
 
   if (existingHandle) {
