@@ -6,3 +6,8 @@
 [data-sonner-toast][data-styled="true"][data-type="error"] {
   @apply bg-red-50 text-red-600 border-l-4 border-red-400 rounded-md px-4 py-3;
 }
+
+/* Global style override for toast.success */
+[data-sonner-toast][data-styled="true"][data-type="success"] {
+  @apply bg-green-50 text-green-600 border-l-4 border-green-400 rounded-md px-4 py-3;
+}
