@@ -45,3 +45,28 @@ export const updateUserProfileHttp = async (
     throw new Error(errorMessage);
   }
 };
+
+/**
+ * Uploads a user profile image
+ * @param userId User ID to update
+ * @param imageFile Image file to upload
+ * @throws Error if the image cannot be uploaded
+ * @returns Promise with the image URL
+ */
+export const uploadUserImageHttp = async (
+  userId: string,
+  imageFile: File
+): Promise<string> => {
+  try {
+    return await apiService.api.uploadUserImage(userId, imageFile);
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    // Extract the error message from the API response
+    const errorMessage = extractErrorMessage(
+      error,
+      'Failed to upload profile image'
+    );
+    // Re-throw for React Query to handle error state
+    throw new Error(errorMessage);
+  }
+};

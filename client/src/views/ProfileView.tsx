@@ -4,7 +4,11 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import type { ProfileForm, User } from '../types';
-import { updateUserProfileHttp } from '../services/usersApi';
+
+import {
+  updateUserProfileHttp,
+  uploadUserImageHttp,
+} from '../services/usersApi';
 import ErrorMessage from '../components/ErrorMessage.tsx';
 
 const ProfileView = () => {
@@ -37,8 +41,28 @@ const ProfileView = () => {
       },
     });
 
+  const { mutate: uploadUserImage, isPending: isUploadingImage } = useMutation({
+    mutationFn: (imageFile: File) =>
+      uploadUserImageHttp(currentUser._id, imageFile),
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    onSuccess: (imageUrl: string) => {
+      toast.success('Image uploaded successfully');
+      // Optimistic UI - can update the cache since we're pretty sure this was successful
+      queryClient.setQueryData(['my-user'], (prevData: User) => {
+        return {
+          ...prevData,
+          image: imageUrl,
+        };
+      });
+    },
+  });
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.files);
+    if (e.target.files && e.target.files.length > 0) {
+      uploadUserImage(e.target.files[0]);
+    }
   };
 
   const handleUserProfileForm = (formData: ProfileForm) => {
@@ -105,6 +129,7 @@ const ProfileView = () => {
           className="border-none bg-slate-100 rounded-lg p-2"
           accept="image/*"
           onChange={handleChange}
+          disabled={isUploadingImage}
         />
       </div>
 

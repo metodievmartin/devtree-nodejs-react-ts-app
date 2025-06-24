@@ -23,7 +23,7 @@ const DevTreeMainView = ({ user }: DevTreeMainViewProps) => {
           target="_blank"
           rel="noreferrer noopener"
         >
-          Visit my profile
+          Visit my profile /{user.handle}
         </Link>
       </div>
 
@@ -33,10 +33,19 @@ const DevTreeMainView = ({ user }: DevTreeMainViewProps) => {
         </div>
 
         <div className="w-full md:w-96 bg-slate-800 px-5 py-10 space-y-6">
-          <div className="text-white">
-            <h2 className="text-xl font-bold mb-2">{user.name}</h2>
-            <p className="text-gray-300">@{user.handle}</p>
-          </div>
+          <p className="text-4xl text-center text-white">{user.handle}</p>
+
+          {user.image && (
+            <img
+              src={user.image}
+              alt="Imagen Perfil"
+              className="mx-auto max-w-[250px]"
+            />
+          )}
+
+          <p className="text-center text-lg font-black text-white">
+            {user.description}
+          </p>
         </div>
       </div>
     </>

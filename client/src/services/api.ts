@@ -112,7 +112,10 @@ const apiMethods = {
    * @param profileData Profile data to update
    * @returns Promise with the updated user data
    */
-  updateUserProfile: async (userId: string, profileData: ProfileForm): Promise<User> => {
+  updateUserProfile: async (
+    userId: string,
+    profileData: ProfileForm
+  ): Promise<User> => {
     const axiosResponse = await api.patch<UserApiResponse>(
       `${API_PREFIX}/users/${userId}`,
       profileData
@@ -137,6 +140,48 @@ const apiMethods = {
     }
 
     return data.user;
+  },
+
+  /**
+   * Upload a user's profile image
+   * @param userId User ID to update
+   * @param imageFile Image file to upload
+   * @returns Promise with the image URL
+   */
+  uploadUserImage: async (userId: string, imageFile: File): Promise<string> => {
+    const formData = new FormData();
+
+    formData.append('image', imageFile);
+
+    const axiosResponse = await api.post(
+      `/api/v1/users/${userId}/image`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+
+    const { data } = axiosResponse;
+
+    if (!data.success || !data.imageUrl) {
+      // Custom error response for consistent error handling
+      throw new AxiosError(
+        'Failed to upload user profile image',
+        '500',
+        axiosResponse.config,
+        axiosResponse.request,
+        {
+          ...axiosResponse,
+          data: { error: 'Failed to upload user profile image' },
+          status: 500,
+          statusText: 'Bad Request',
+        }
+      );
+    }
+
+    return data.imageUrl;
   },
 };
 
