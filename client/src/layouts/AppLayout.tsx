@@ -1,20 +1,20 @@
 import { Toaster } from 'sonner';
-import { useQuery } from '@tanstack/react-query';
 import { Navigate } from 'react-router';
+import { useQuery } from '@tanstack/react-query';
 
 import paths from '../utils/paths.ts';
 import Header from '../components/Header';
-import { getMyUser } from '../services/usersApi.ts';
-import LoadingSkeleton from '../components/LoadingSkeleton';
 import DevTreeMainView from '../views/DevTreeMainView';
+import { getMyUserHttp } from '../services/usersApi.ts';
+import LoadingSkeleton from '../components/LoadingSkeleton';
 
 const AppLayout = () => {
   const {
-    data: user,
+    data: currentUser,
     isLoading,
     isError,
   } = useQuery({
-    queryFn: getMyUser,
+    queryFn: getMyUserHttp,
     queryKey: ['my-user'],
     retry: 1,
     refetchOnWindowFocus: false,
@@ -26,17 +26,17 @@ const AppLayout = () => {
   }
 
   // If the user is not logged in, redirect to the login page
-  if (isError || !user) {
+  if (isError || !currentUser) {
     return <Navigate to={paths.auth.login()} />;
   }
 
   return (
     <>
-      <Header user={user} onLogout={() => {}} />
+      <Header user={currentUser} onLogout={() => {}} />
 
       <div className="bg-gray-100 min-h-screen py-10">
         <main className="mx-auto max-w-5xl p-10 md:p-0">
-          <DevTreeMainView user={user} />
+          <DevTreeMainView user={currentUser} />
         </main>
       </div>
 

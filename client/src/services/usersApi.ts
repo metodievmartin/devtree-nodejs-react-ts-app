@@ -8,7 +8,7 @@ import { extractErrorMessage } from './apiUtils';
  * @throws Error if the user data cannot be fetched
  * @returns Promise with the user data
  */
-export const getMyUser = async (): Promise<User> => {
+export const getMyUserHttp = async (): Promise<User> => {
   try {
     return await apiService.api.getMyUser();
   } catch (error) {
@@ -29,7 +29,7 @@ export const getMyUser = async (): Promise<User> => {
  * @throws Error if the profile cannot be updated
  * @returns Promise with the updated user data
  */
-export const updateUserProfile = async (
+export const updateUserProfileHttp = async (
   userId: string,
   profileData: ProfileForm
 ): Promise<User> => {

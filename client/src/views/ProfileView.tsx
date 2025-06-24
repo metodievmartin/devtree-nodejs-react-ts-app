@@ -4,44 +4,45 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import type { ProfileForm, User } from '../types';
-import { updateUserProfile } from '../services/usersApi';
+import { updateUserProfileHttp } from '../services/usersApi';
 import ErrorMessage from '../components/ErrorMessage.tsx';
 
 const ProfileView = () => {
   const queryClient = useQueryClient();
-  const data: User = queryClient.getQueryData(['my-user'])!;
+  const currentUser: User = queryClient.getQueryData(['my-user'])!;
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<ProfileForm>({
     defaultValues: {
-      name: data.name,
-      handle: data.handle,
-      description: data.description,
+      name: currentUser.name,
+      handle: currentUser.handle,
+      description: currentUser.description,
     },
     mode: 'onChange',
     reValidateMode: 'onSubmit',
   });
 
-  const { mutate: updateProfile, isPending: isUpdatingProfile } = useMutation({
-    mutationFn: (formData: ProfileForm) =>
-      updateUserProfile(data._id, formData),
-    onError: (error) => {
-      toast.error(error.message);
-    },
-    onSuccess: () => {
-      toast.success('Profile updated successfully');
-      queryClient.invalidateQueries({ queryKey: ['my-user'] });
-    },
-  });
+  const { mutate: updateUserProfile, isPending: isUpdatingProfile } =
+    useMutation({
+      mutationFn: (formData: ProfileForm) =>
+        updateUserProfileHttp(currentUser._id, formData),
+      onError: (error) => {
+        toast.error(error.message);
+      },
+      onSuccess: () => {
+        toast.success('Profile updated successfully');
+        queryClient.invalidateQueries({ queryKey: ['my-user'] });
+      },
+    });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.files);
   };
 
   const handleUserProfileForm = (formData: ProfileForm) => {
-    updateProfile(formData);
+    updateUserProfile(formData);
   };
 
   return (
