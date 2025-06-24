@@ -2,6 +2,7 @@ import axios, { AxiosError } from 'axios';
 import type {
   AuthResponse,
   LoginCredentials,
+  ProfileForm,
   RegisterData,
   User,
   UserApiResponse,
@@ -98,6 +99,39 @@ const apiMethods = {
           data: { error: 'Failed to fetch user data' },
           status: 401,
           statusText: 'Unauthorized',
+        }
+      );
+    }
+
+    return data.user;
+  },
+
+  /**
+   * Update the user profile
+   * @param userId User ID to update
+   * @param profileData Profile data to update
+   * @returns Promise with the updated user data
+   */
+  updateUserProfile: async (userId: string, profileData: ProfileForm): Promise<User> => {
+    const axiosResponse = await api.patch<UserApiResponse>(
+      `${API_PREFIX}/users/${userId}`,
+      profileData
+    );
+
+    const { data } = axiosResponse;
+
+    if (!data.success || !data.user) {
+      // Custom error response for consistent error handling
+      throw new AxiosError(
+        'Failed to update user profile',
+        '400',
+        axiosResponse.config,
+        axiosResponse.request,
+        {
+          ...axiosResponse,
+          data: { error: 'Failed to update user profile' },
+          status: 400,
+          statusText: 'Bad Request',
         }
       );
     }

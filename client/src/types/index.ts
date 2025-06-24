@@ -28,4 +28,4 @@ export type UserApiResponse = {
   user: User;
 };
 
-export type ProfileForm = Pick<User, 'handle' | 'description'>;
+export type ProfileForm = Pick<User, 'name' | 'handle' | 'description'>;

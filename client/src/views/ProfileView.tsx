@@ -1,18 +1,38 @@
+import { toast } from 'sonner';
 import type { ChangeEvent } from 'react';
 import { useForm } from 'react-hook-form';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import type { ProfileForm } from '../types';
+import type { ProfileForm, User } from '../types';
+import { updateUserProfile } from '../services/usersApi';
 import ErrorMessage from '../components/ErrorMessage.tsx';
 
 const ProfileView = () => {
+  const queryClient = useQueryClient();
+  const data: User = queryClient.getQueryData(['my-user'])!;
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<ProfileForm>({
     defaultValues: {
-      handle: '',
-      description: '',
+      name: data.name,
+      handle: data.handle,
+      description: data.description,
+    },
+    mode: 'onChange',
+    reValidateMode: 'onSubmit',
+  });
+
+  const { mutate: updateProfile, isPending: isUpdatingProfile } = useMutation({
+    mutationFn: (formData: ProfileForm) =>
+      updateUserProfile(data._id, formData),
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    onSuccess: () => {
+      toast.success('Profile updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['my-user'] });
     },
   });
 
@@ -21,7 +41,7 @@ const ProfileView = () => {
   };
 
   const handleUserProfileForm = (formData: ProfileForm) => {
-    console.log(formData);
+    updateProfile(formData);
   };
 
   return (
@@ -31,13 +51,34 @@ const ProfileView = () => {
     >
       <legend className="text-2xl text-slate-800 text-center">Edit info</legend>
       <div className="grid grid-cols-1 gap-2">
-        <label htmlFor="handle">Handle:</label>
+        <label htmlFor="name">Name*</label>
         <input
           type="text"
+          id="name"
+          className="border-none bg-slate-100 rounded-lg p-2"
+          placeholder="Your name"
+          {...register('name', {
+            required: 'Name is a required field',
+          })}
+        />
+
+        {errors.name && <ErrorMessage>{errors.name.message}</ErrorMessage>}
+      </div>
+
+      <div className="grid grid-cols-1 gap-2">
+        <label htmlFor="handle">Handle*</label>
+        <input
+          type="text"
+          id="handle"
           className="border-none bg-slate-100 rounded-lg p-2"
           placeholder="Your handle or username"
           {...register('handle', {
-            required: 'Handle is required field',
+            required: 'Handle is a required field',
+            pattern: {
+              value: /^[a-zA-Z0-9_-]+$/,
+              message:
+                'Handle can only contain letters, numbers, underscores and hyphens',
+            },
           })}
         />
 
@@ -47,24 +88,19 @@ const ProfileView = () => {
       <div className="grid grid-cols-1 gap-2">
         <label htmlFor="description">Description:</label>
         <textarea
+          id="description"
           className="border-none bg-slate-100 rounded-lg p-2"
           placeholder="Your description..."
-          {...register('description', {
-            required: 'Description is required field',
-          })}
+          {...register('description')}
         />
-
-        {errors.description && (
-          <ErrorMessage>{errors.description.message}</ErrorMessage>
-        )}
       </div>
 
       <div className="grid grid-cols-1 gap-2">
-        <label htmlFor="handle">Image:</label>
+        <label htmlFor="image">Image:</label>
         <input
           id="image"
           type="file"
-          name="handle"
+          name="image"
           className="border-none bg-slate-100 rounded-lg p-2"
           accept="image/*"
           onChange={handleChange}
@@ -74,7 +110,8 @@ const ProfileView = () => {
       <input
         type="submit"
         className="bg-cyan-400 p-2 text-lg w-full uppercase text-slate-600 rounded-lg font-bold cursor-pointer"
-        value="Save changes"
+        value={isUpdatingProfile ? 'Saving...' : 'Save changes'}
+        disabled={isUpdatingProfile}
       />
     </form>
   );
