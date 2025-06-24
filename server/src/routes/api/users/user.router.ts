@@ -6,7 +6,11 @@ import {
 } from '../../../middlewares/auth.middleware';
 import { body } from 'express-validator';
 import { handleInputErrors } from '../../../middlewares/validation.middleware';
-import { getCurrentUser, updateUserProfile } from './user.controller';
+import {
+  getCurrentUser,
+  updateUserProfile,
+  uploadUserImage,
+} from './user.controller';
 
 const userRouter = Router();
 
@@ -31,6 +35,19 @@ userRouter.patch(
   body('handle').notEmpty().withMessage("The 'handle' field cannot be empty"),
   handleInputErrors,
   updateUserProfile
+);
+
+/**
+ * @route   POST /api/v1/users/:userId/image
+ * @desc    Uploads a user profile image
+ * @access  Private
+ * @param   userId - ID of the user to update
+ */
+userRouter.post(
+  '/:userId/image',
+  authenticate,
+  verifyOwnership('userId'),
+  uploadUserImage
 );
 
 export default userRouter;

@@ -1,10 +1,16 @@
+import { Request } from 'express';
+import formidable from 'formidable';
+import { v4 as uuid } from 'uuid';
+
 import {
   findUserById,
   findUserByHandle,
   createHandle,
 } from '../models/user.model';
+import cloudinary from '../config/cloudinary';
 import { ApiError } from '../utils/api-error';
 import { SafeUser, UserUpdateData } from '../types/user.types';
+import { KILOBYTE } from '../constants';
 
 /**
  * Update a user's profile
@@ -71,4 +77,58 @@ export const updateUserProfile = async (
   };
 
   return safeUser;
+};
+
+/**
+ * Upload a user's profile image to Cloudinary
+ * @param req Express request object containing the file
+ * @param userId User ID to update
+ * @returns Object containing the secure URL of the uploaded image
+ */
+export const uploadUserImage = async (req: Request, userId: string) => {
+  // Validate user ID
+  if (!userId) {
+    throw new ApiError(400, 'User ID is required');
+  }
+
+  // Find the user by ID
+  const user = await findUserById(userId);
+
+  if (!user) {
+    throw new ApiError(404, 'User not found');
+  }
+
+  // Parse the request containing form data
+  const FIVE_HUNDRED_KB = 500 * KILOBYTE;
+  const form = formidable({ multiples: false, maxFileSize: FIVE_HUNDRED_KB });
+
+  const [_, files] = await form.parse(req);
+
+  if (!files || !files.image || !files.image[0]) {
+    throw new ApiError(400, 'No image file provided');
+  }
+
+  const imageFile = files.image[0];
+
+  // Check if the file is a valid image file
+  if (!imageFile.mimetype.startsWith('image/')) {
+    throw new ApiError(400, 'Invalid image file');
+  } else if (imageFile.mimetype.startsWith('image/svg')) {
+    throw new ApiError(400, 'SVG images are not allowed');
+  }
+
+  const uploadResult = await cloudinary.uploader.upload(imageFile.filepath, {
+    public_id: uuid(),
+  });
+
+  if (!uploadResult || uploadResult.error || !uploadResult.secure_url) {
+    throw new ApiError(500, 'There was an error uploading the image');
+  }
+
+  user.image = uploadResult.secure_url;
+  await user.save();
+
+  return {
+    imageUrl: user.image,
+  };
 };
