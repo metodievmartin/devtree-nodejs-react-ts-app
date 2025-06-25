@@ -37,4 +37,7 @@ export interface UserRegistrationData {
   links?: string;
 }
 
-export type UserUpdateData = Pick<IUser, 'name' | 'handle' | 'description'>;
+export type UserUpdateData = Pick<
+  IUser,
+  'name' | 'handle' | 'description' | 'links'
+>;

@@ -62,6 +62,7 @@ export const updateUserProfile = async (
 
   // Update the description
   targetUser.description = updateData.description || '';
+  targetUser.links = updateData.links || '[]';
 
   // Save the updated user
   await targetUser.save();

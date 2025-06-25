@@ -26,13 +26,14 @@ export const getCurrentUser = catchAsync(
 export const updateUserProfile = catchAsync(
   async (req: Request, res: Response) => {
     const { userId } = req.params;
-    const { name, handle, description = '' } = req.body;
+    const { name, handle, description = '', links } = req.body;
 
     // Update the user profile using the service
     const updatedUser = await updateProfileService(userId, {
       name,
       handle,
       description,
+      links,
     });
 
     res.status(200).json({
