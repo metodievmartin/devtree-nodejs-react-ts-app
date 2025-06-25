@@ -3,6 +3,7 @@ import { type ChangeEvent, useEffect, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import type { SocialNetwork, User, UserUpdateData } from '../types';
+
 import { isValidUrl } from '../utils';
 import { socials } from '../data/socials.ts';
 import DevTreeInput from '../components/DevTreeInput.tsx';
@@ -72,16 +73,28 @@ const LinkTreeView = () => {
   };
 
   const urlChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    // Update the local state for UI
     const updatedLinks = devTreeLinks.map((link) =>
       link.name === e.target.name ? { ...link, url: e.target.value } : link
     );
 
     setDevTreeLinks(updatedLinks);
 
+    // Get the current links from the query client to preserve order
+    const currentLinks: SocialNetwork[] = JSON.parse(
+      queryClient.getQueryData<User>(['my-user'])!.links
+    );
+
+    // Update only the URL of the specific link
+    const updatedItems = currentLinks.map((link) =>
+      link.name === e.target.name ? { ...link, url: e.target.value } : link
+    );
+
+    // Update the query data
     queryClient.setQueryData(['my-user'], (prevData: User) => {
       return {
         ...prevData,
-        links: JSON.stringify(updatedLinks),
+        links: JSON.stringify(updatedItems),
       };
     });
   };
@@ -111,10 +124,72 @@ const LinkTreeView = () => {
 
     setDevTreeLinks(updatedLinks);
 
+    // Get the latest links from the query client
+    const currentLinks = JSON.parse(
+      queryClient.getQueryData<User>(['my-user'])!.links
+    );
+
+    // Find the selected social network
+    const selectedSocialNetwork = updatedLinks.find(
+      (link) => link.name === socialNetwork
+    );
+
+    // Create a new array with updated links
+    let updatedItems = [...currentLinks];
+
+    if (selectedSocialNetwork?.enabled) {
+      // When enabling a link
+
+      // Find the link in the current array
+      const linkIndex = updatedItems.findIndex(
+        (link) => link.name === socialNetwork
+      );
+
+      if (linkIndex !== -1) {
+        // Update the existing link
+        updatedItems[linkIndex].enabled = true;
+      } else {
+        // Add the new link
+        updatedItems.push({
+          ...selectedSocialNetwork,
+          id: 0, // Will be assigned below
+        });
+      }
+
+      // Reassign all IDs for enabled links
+      let nextId = 1;
+      updatedItems = updatedItems.map((link) => {
+        if (link.enabled) {
+          return { ...link, id: nextId++ };
+        }
+        return link;
+      });
+    } else {
+      // When disabling a link
+
+      // Find and update the link
+      updatedItems = updatedItems.map((link) => {
+        if (link.name === socialNetwork) {
+          return { ...link, enabled: false, id: 0 };
+        }
+        return link;
+      });
+
+      // Reassign all IDs for enabled links
+      let nextId = 1;
+      updatedItems = updatedItems.map((link) => {
+        if (link.enabled) {
+          return { ...link, id: nextId++ };
+        }
+        return link;
+      });
+    }
+
+    // Update the query data
     queryClient.setQueryData(['my-user'], (prevData: User) => {
       return {
         ...prevData,
-        links: JSON.stringify(updatedLinks),
+        links: JSON.stringify(updatedItems),
       };
     });
   };
