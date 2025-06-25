@@ -3,7 +3,7 @@ import type { ChangeEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import type { ProfileForm, User } from '../types';
+import type { ProfileForm, User, UserUpdateData } from '../types';
 
 import {
   updateUserProfileHttp,
@@ -13,7 +13,7 @@ import ErrorMessage from '../components/ErrorMessage.tsx';
 
 const ProfileView = () => {
   const queryClient = useQueryClient();
-  const currentUser: User = queryClient.getQueryData(['my-user'])!;
+  const currentUser = queryClient.getQueryData<User>(['my-user'])!;
   const {
     register,
     handleSubmit,
@@ -30,8 +30,8 @@ const ProfileView = () => {
 
   const { mutate: updateUserProfile, isPending: isUpdatingProfile } =
     useMutation({
-      mutationFn: (formData: ProfileForm) =>
-        updateUserProfileHttp(currentUser._id, formData),
+      mutationFn: (updateData: UserUpdateData) =>
+        updateUserProfileHttp(currentUser._id, updateData),
       onError: (error) => {
         toast.error(error.message);
       },
@@ -66,7 +66,14 @@ const ProfileView = () => {
   };
 
   const handleUserProfileForm = (formData: ProfileForm) => {
-    updateUserProfile(formData);
+    const userData = queryClient.getQueryData<User>(['my-user'])!;
+    updateUserProfile({
+      name: formData.name,
+      handle: formData.handle,
+      description: formData.description,
+      image: userData.image,
+      links: userData.links,
+    });
   };
 
   return (

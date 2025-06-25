@@ -17,6 +17,8 @@ export type LoginCredentials = Pick<User, 'email'> & {
   password: string;
 };
 
+export type UserUpdateData = Omit<User, '_id' | 'email'>;
+
 export type AuthResponse = {
   success: boolean;
   accessToken: string;
@@ -29,3 +31,12 @@ export type UserApiResponse = {
 };
 
 export type ProfileForm = Pick<User, 'name' | 'handle' | 'description'>;
+
+export type SocialNetwork = {
+  id: number;
+  name: string;
+  url: string;
+  enabled: boolean;
+};
+
+export type DevTreeLink = Pick<SocialNetwork, 'name' | 'url' | 'enabled'>;

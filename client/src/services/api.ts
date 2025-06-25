@@ -2,10 +2,10 @@ import axios, { AxiosError } from 'axios';
 import type {
   AuthResponse,
   LoginCredentials,
-  ProfileForm,
   RegisterData,
   User,
   UserApiResponse,
+  UserUpdateData,
 } from '../types';
 
 // API path prefixes
@@ -114,7 +114,7 @@ const apiMethods = {
    */
   updateUserProfile: async (
     userId: string,
-    profileData: ProfileForm
+    profileData: UserUpdateData
   ): Promise<User> => {
     const axiosResponse = await api.patch<UserApiResponse>(
       `${API_PREFIX}/users/${userId}`,

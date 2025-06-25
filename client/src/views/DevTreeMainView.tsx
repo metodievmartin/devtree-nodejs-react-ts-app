@@ -1,6 +1,9 @@
 import { Link, Outlet } from 'react-router';
+import { useEffect, useState } from 'react';
 
-import type { User } from '../types';
+import type { SocialNetwork, User } from '../types';
+
+import DevTreeLink from '../components/DevTreeLink.tsx';
 import NavigationTabs from '../components/NavigationTabs.tsx';
 
 interface DevTreeMainViewProps {
@@ -12,6 +15,16 @@ interface DevTreeMainViewProps {
  * Contains the profile link, main content area with Outlet, and user sidebar
  */
 const DevTreeMainView = ({ user }: DevTreeMainViewProps) => {
+  const [enabledLinks, setEnabledLinks] = useState<SocialNetwork[]>(
+    JSON.parse(user.links).filter((item: SocialNetwork) => item.enabled)
+  );
+
+  useEffect(() => {
+    setEnabledLinks(
+      JSON.parse(user.links).filter((item: SocialNetwork) => item.enabled)
+    );
+  }, [user]);
+
   return (
     <>
       <NavigationTabs />
@@ -46,6 +59,12 @@ const DevTreeMainView = ({ user }: DevTreeMainViewProps) => {
           <p className="text-center text-lg font-black text-white">
             {user.description}
           </p>
+
+          <div className="mt-20 flex flex-col gap-5">
+            {enabledLinks.map((link) => (
+              <DevTreeLink key={link.name} link={link} />
+            ))}
+          </div>
         </div>
       </div>
     </>

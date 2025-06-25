@@ -1,4 +1,4 @@
-import type { ProfileForm, User } from '../types';
+import type { User, UserUpdateData } from '../types';
 
 import apiService from './api';
 import { extractErrorMessage } from './apiUtils';
@@ -31,7 +31,7 @@ export const getMyUserHttp = async (): Promise<User> => {
  */
 export const updateUserProfileHttp = async (
   userId: string,
-  profileData: ProfileForm
+  profileData: UserUpdateData
 ): Promise<User> => {
   try {
     return await apiService.api.updateUserProfile(userId, profileData);
