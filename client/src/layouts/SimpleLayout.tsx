@@ -3,7 +3,7 @@ import { Outlet } from 'react-router';
 
 import Logo from '../components/Logo.tsx';
 
-const AuthLayout = () => {
+const SimpleLayout = () => {
   return (
     <>
       <div className="bg-slate-800 min-h-screen">
@@ -21,4 +21,4 @@ const AuthLayout = () => {
   );
 };
 
-export default AuthLayout;
+export default SimpleLayout;

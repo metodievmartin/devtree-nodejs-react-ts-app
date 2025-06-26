@@ -110,6 +110,10 @@ export const paths = {
    */
   userProfile: createDynamicPathFactory(),
 
+  notFound: createStaticPathFactory(BASE_PATHS.INDEX, '404'),
+
+  home: createStaticPathFactory(BASE_PATHS.INDEX, '/'),
+
   // Helper to check if a path belongs to auth section
   isAuthPath: (path: string): boolean => path.startsWith(BASE_PATHS.AUTH),
 
