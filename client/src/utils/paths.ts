@@ -18,6 +18,7 @@ export type PathOptions = {
 const BASE_PATHS = {
   AUTH: '/auth',
   ADMIN: '/admin',
+  INDEX: '/',
 } as const;
 
 /**
@@ -26,12 +27,36 @@ const BASE_PATHS = {
  * @param segment - The path segment to append
  * @returns A function that returns the full or relative path based on options
  */
-const createPathBuilder = (basePath: string, segment: string = '') => {
+const createStaticPathFactory = (
+  basePath: string = '',
+  segment: string = ''
+) => {
   return (options: PathOptions = {}): string => {
     const { relative = false } = options;
 
-    if (segment === '') {
+    if (segment === '/') {
       return basePath; // Base path with no segment
+    }
+
+    return relative ? segment : `${basePath}/${segment}`;
+  };
+};
+
+/**
+ * Creates a dynamic path builder function
+ * @param basePath - Optional prefix for the path (e.g., '/api')
+ * @returns A function that accepts a dynamic segment and options and returns the path
+ */
+const createDynamicPathFactory = (basePath: string = '/') => {
+  return (segment: string, options: PathOptions = {}): string => {
+    if (!segment) {
+      throw new Error('Dynamic segment is required for path');
+    }
+
+    const { relative = false } = options;
+
+    if (basePath === '/') {
+      return relative ? segment : `/${segment}`;
     }
 
     return relative ? segment : `${basePath}/${segment}`;
@@ -47,7 +72,7 @@ export const paths = {
      * @param {PathOptions} options - Path options
      * @returns Path to the login page
      */
-    login: createPathBuilder(BASE_PATHS.AUTH, 'login'),
+    login: createStaticPathFactory(BASE_PATHS.AUTH, 'login'),
 
     /**
      * Registration page path
@@ -55,7 +80,7 @@ export const paths = {
      * @param {PathOptions} options - Path options
      * @returns Path to the registration page
      */
-    register: createPathBuilder(BASE_PATHS.AUTH, 'register'),
+    register: createStaticPathFactory(BASE_PATHS.AUTH, 'register'),
   },
 
   admin: {
@@ -65,7 +90,7 @@ export const paths = {
      * @param {PathOptions} options - Path options
      * @returns Path to the admin dashboard
      */
-    index: createPathBuilder(BASE_PATHS.ADMIN),
+    index: createStaticPathFactory(BASE_PATHS.ADMIN),
 
     /**
      * Admin profile page path
@@ -73,8 +98,17 @@ export const paths = {
      * @param {PathOptions} options - Path options
      * @returns Path to the admin profile page
      */
-    profile: createPathBuilder(BASE_PATHS.ADMIN, 'profile'),
+    profile: createStaticPathFactory(BASE_PATHS.ADMIN, 'profile'),
   },
+
+  /**
+   * User profile page path with dynamic handle
+   * `/:handle`
+   * @param {string} handle - User handle/username
+   * @param {PathOptions} options - Path options
+   * @returns Path to the user's profile page
+   */
+  userProfile: createDynamicPathFactory(),
 
   // Helper to check if a path belongs to auth section
   isAuthPath: (path: string): boolean => path.startsWith(BASE_PATHS.AUTH),
