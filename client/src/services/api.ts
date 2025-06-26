@@ -107,6 +107,37 @@ const apiMethods = {
   },
 
   /**
+   * Get a user by their handle
+   * @param handle User handle to fetch
+   * @returns Promise with the user data
+   */
+  getUserByHandle: async (handle: string): Promise<User> => {
+    const axiosResponse = await api.get<UserApiResponse>(
+      `${API_PREFIX}/users/${handle}`
+    );
+
+    const { data } = axiosResponse;
+
+    if (!data.success || !data.user) {
+      // Custom error response for consistent error handling
+      throw new AxiosError(
+        'Failed to fetch user data',
+        '404',
+        axiosResponse.config,
+        axiosResponse.request,
+        {
+          ...axiosResponse,
+          data: { error: 'Failed to fetch user data' },
+          status: 404,
+          statusText: 'Not Found',
+        }
+      );
+    }
+
+    return data.user;
+  },
+
+  /**
    * Update the user profile
    * @param userId User ID to update
    * @param profileData Profile data to update

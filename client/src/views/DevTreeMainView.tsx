@@ -12,6 +12,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
+import paths from '../utils/paths.ts';
 
 interface DevTreeMainViewProps {
   user: User;
@@ -72,7 +73,7 @@ const DevTreeMainView = ({ user }: DevTreeMainViewProps) => {
       <div className="flex justify-end">
         <Link
           className="font-bold text-right text-slate-800 text-2xl"
-          to={`/profile/${user.handle}`}
+          to={paths.userProfile(user.handle)}
           target="_blank"
           rel="noreferrer noopener"
         >

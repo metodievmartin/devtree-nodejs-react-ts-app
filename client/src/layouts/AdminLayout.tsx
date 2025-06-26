@@ -8,7 +8,7 @@ import DevTreeMainView from '../views/DevTreeMainView';
 import { getMyUserHttp } from '../services/usersApi.ts';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 
-const AppLayout = () => {
+const AdminLayout = () => {
   const {
     data: currentUser,
     isLoading,
@@ -45,4 +45,4 @@ const AppLayout = () => {
   );
 };
 
-export default AppLayout;
+export default AdminLayout;
