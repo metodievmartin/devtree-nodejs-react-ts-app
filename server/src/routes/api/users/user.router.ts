@@ -10,6 +10,7 @@ import {
   getCurrentUser,
   updateUserProfile,
   uploadUserImage,
+  getUserByHandle,
 } from './user.controller';
 
 const userRouter = Router();
@@ -20,6 +21,13 @@ const userRouter = Router();
  * @access  Private
  */
 userRouter.get('/me', authenticate, getCurrentUser);
+
+/**
+ * @route   GET /api/v1/users/:handle
+ * @desc    Get user by handle
+ * @access  Public
+ */
+userRouter.get('/:handle', getUserByHandle);
 
 /**
  * @route   PATCH /api/v1/users/:userId

@@ -4,6 +4,7 @@ import { catchAsync } from '../../../utils/catch-async';
 import {
   updateUserProfile as updateProfileService,
   uploadUserImage as uploadUserImageService,
+  getUserByHandle as getUserByHandleService,
 } from '../../../services/user.service';
 
 /**
@@ -16,6 +17,23 @@ export const getCurrentUser = catchAsync(
     res.status(200).json({
       success: true,
       user: req.user,
+    });
+  }
+);
+
+/**
+ * Get a user by their handle
+ */
+export const getUserByHandle = catchAsync(
+  async (req: Request, res: Response) => {
+    const handle = req.params.handle;
+
+    // Get the user by handle using the service
+    const user = await getUserByHandleService(handle);
+
+    res.status(200).json({
+      success: true,
+      user,
     });
   }
 );

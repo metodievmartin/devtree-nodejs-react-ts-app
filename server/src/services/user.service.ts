@@ -9,8 +9,38 @@ import {
 } from '../models/user.model';
 import cloudinary from '../config/cloudinary';
 import { ApiError } from '../utils/api-error';
-import { SafeUser, UserUpdateData } from '../types/user.types';
+import { SafeUser, UserUpdateData, PublicUser } from '../types/user.types';
 import { KILOBYTE } from '../constants';
+
+/**
+ * Get a user by their handle
+ * @param handle User's handle
+ * @returns Public user document or throws an error if not found
+ */
+export const getUserByHandle = async (handle: string): Promise<PublicUser> => {
+  // Validate handle
+  if (!handle) {
+    throw new ApiError(400, 'Handle is required');
+  }
+
+  // Find the user by handle
+  const user = await findUserByHandle(handle);
+
+  if (!user) {
+    throw new ApiError(404, 'Could not find user with that handle');
+  }
+
+  // Return only public user information
+  const publicUser: PublicUser = {
+    handle: user.handle,
+    name: user.name,
+    description: user.description,
+    image: user.image,
+    links: user.links,
+  };
+
+  return publicUser;
+};
 
 /**
  * Update a user's profile

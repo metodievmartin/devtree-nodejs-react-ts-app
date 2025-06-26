@@ -24,6 +24,15 @@ export type SafeUser = Pick<
 >;
 
 /**
+ * Public user profile without sensitive information (password, email, _id)
+ * Used for public-facing endpoints
+ */
+export type PublicUser = Pick<
+  IUser,
+  'handle' | 'name' | 'description' | 'image' | 'links'
+>;
+
+/**
  * User registration data
  * Contains all fields needed to create a new user
  */
